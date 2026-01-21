@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية - مدى</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+            <b style="color: var(--primary); font-size: 1.2rem;">Mada</b>
+            <span class="material-icons" style="color: var(--accent); cursor: pointer;" onclick="window.logoutUser()">logout</span>
+        </div>
+
+        <div style="flex: 1; padding: 20px; overflow-y: auto;">
+            <h3>أهلاً بك في مجتمعك!</h3>
+            <p>هنا ستظهر المنشورات والمنتجات قريباً.</p>
+            
+            <div style="background: #e0f2f1; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <h4>حالة الحساب</h4>
+                <p>تم تسجيل دخولك بنجاح.</p>
+            </div>
+        </div>
+
+        <div style="padding: 10px; border-top: 1px solid #eee; display: flex; justify-content: space-around;">
+            <span class="material-icons" style="color: var(--primary);">home</span>
+            <span class="material-icons" style="color: #ccc;">storefront</span>
+            <span class="material-icons" style="color: #ccc;">person</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { checkAuth } from './app.js';
+        // تأكد أن المستخدم مسجل، ولو لا، اطرده لصفحة الدخول
+        checkAuth('home');
+    </script>
+</body>
+</html>
