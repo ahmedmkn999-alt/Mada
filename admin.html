@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - مدى</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+    <div class="admin-layout">
+        <div class="sidebar">
+            <h2 style="color: var(--accent); margin-bottom: 30px;">لوحة مدى</h2>
+            <div class="menu-item active" onclick="switchSection('dashboard')">
+                <span class="material-icons">dashboard</span> الرئيسية
+            </div>
+            <div class="menu-item" onclick="switchSection('products')">
+                <span class="material-icons">shopping_bag</span> المنتجات
+            </div>
+            <div class="menu-item" onclick="location.href='home.html'">
+                <span class="material-icons">exit_to_app</span> الذهاب للموقع
+            </div>
+        </div>
+
+        <div class="main-content">
+            
+            <div id="section-dashboard">
+                <h1>نظرة عامة</h1>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>المنتجات</div>
+                        <div class="stat-num" id="prod-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>المستخدمين</div>
+                        <div class="stat-num">غير محدد</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-products" class="hidden">
+                <h1>إدارة المتجر</h1>
+                
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3>أضف منتج جديد</h3>
+                    <input type="text" id="p-name" placeholder="اسم المنتج">
+                    <input type="number" id="p-price" placeholder="السعر">
+                    <input type="text" id="p-img" placeholder="رابط الصورة">
+                    <button class="btn btn-primary" id="btn-add">نشر المنتج</button>
+                    <p id="msg"></p>
+                </div>
+
+                <h3>المنتجات الحالية</h3>
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>السعر</th>
+                            <th>حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+    
+    <script>
+        function switchSection(id) {
+            document.getElementById('section-dashboard').classList.add('hidden');
+            document.getElementById('section-products').classList.add('hidden');
+            document.getElementById('section-' + id).classList.remove('hidden');
+        }
+    </script>
+</body>
+                      </html>
+                  
