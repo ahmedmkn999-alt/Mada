@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مدى - Mada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #004D40;
+            --accent: #FF6F60;
+            --bg: #FAFAFA;
+            --text: #333;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #eee;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden; /* لمنع السحب في الصفحة كاملة */
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* --- حاوية التطبيق --- */
+        .app-container {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- شاشات التطبيق --- */
+        .screen {
+            flex: 1;
+            overflow-y: auto;
+            display: none; /* مخفي افتراضياً */
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+        .screen.active { display: flex; }
+
+        /* --- شاشة الدخول --- */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+        }
+        .logo-img { width: 100px; height: 100px; margin-bottom: 20px; border-radius: 20px; }
+        input {
+            width: 100%; padding: 15px; margin: 8px 0;
+            border: 1px solid #ddd; border-radius: 12px;
+            font-family: inherit; background: #f9f9f9;
+        }
+        button {
+            width: 100%; padding: 15px; border-radius: 12px;
+            border: none; font-weight: bold; cursor: pointer;
+            margin-top: 10px; font-size: 1rem;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+
+        /* --- الهيدر (الشريط العلوي) --- */
+        .header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            background: white;
+            z-index: 10;
+        }
+        .header-title { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
+
+        /* --- محتوى الصفحة الرئيسية --- */
+        .post-card {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .post-header { padding: 10px; display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #ddd; }
+        .post-img { width: 100%; height: 300px; object-fit: cover; background: #f0f0f0; }
+        .post-actions { padding: 10px; display: flex; gap: 15px; }
+        .action-btn { font-size: 28px; cursor: pointer; color: #333; }
+
+        /* --- صفحة الريلز (Reels) --- */
+        .reels-screen {
+            background: black;
+            color: white;
+            padding: 0;
+        }
+        .reel-item {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            position: relative;
+            background: #222;
+        }
+        .reel-info {
+            position: absolute; bottom: 20px; right: 10px;
+            text-align: right; text-shadow: 1px 1px 3px black;
+        }
+
+        /* --- صفحة المتجر --- */
+        .store-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+        }
+        .product-card {
+            border: 1px solid #eee; border-radius: 10px;
+            overflow: hidden; text-align: center;
+            padding-bottom: 10px;
+        }
+        .product-img { width: 100%; height: 150px; background: #eee; object-fit: cover; }
+
+        /* --- صفحة البروفايل --- */
+        .profile-header { padding: 20px; text-align: center; }
+        .profile-pic { width: 80px; height: 80px; border-radius: 50%; background: #ddd; margin: 0 auto; }
+        .stats { display: flex; justify-content: space-around; margin: 20px 0; }
+        .stat-item { text-align: center; }
+        .stat-num { font-weight: bold; font-size: 1.2rem; }
+        .stat-label { color: #777; font-size: 0.9rem; }
+
+        /* --- شريط التنقل السفلي --- */
+        .bottom-nav {
+            height: 60px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: white;
+            z-index: 20;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: #aaa; font-size: 0.75rem; cursor: pointer; padding: 5px;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item span { font-size: 26px; margin-bottom: 2px; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="auth-flow" class="auth-container">
+            <img src="https://placehold.co/200x200/004D40/FF6F60?text=Mada" class="logo-img">
+            <h2 style="color: var(--primary);">أهلاً بك في مدى</h2>
+            <p style="color: #666; margin-bottom: 20px;">عالمك أقرب إليك</p>
+
+            <input type="email" id="email" placeholder="البريد الإلكتروني">
+            <input type="password" id="password" placeholder="كلمة المرور">
+            <p id="msg" style="color: red; font-size: 0.9rem; height: 20px;"></p>
+            
+            <button class="btn-primary" onclick="login()">تسجيل الدخول</button>
+            <button class="btn-outline" onclick="register()">إنشاء حساب جديد</button>
+        </div>
+
+        <div id="main-app" class="hidden" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+            
+            <div id="home-tab" class="screen active">
+                <div class="header">
+                    <div class="header-title">Mada</div>
+                    <span class="material-icons" style="color: var(--accent);">notifications</span>
+                </div>
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="user-avatar" style="background-image: url('https://i.pravatar.cc/150?img=1'); background-size: cover;"></div>
+                        <b>أحمد محمد</b>
+                    </div>
+                    <img src="https://picsum.photos/400/300?random=1" class="post-img">
+                    <div class="post-actions">
+                        <span class="material-icons action-btn" style="color: var(--accent);">favorite</span>
+                        <span class="material-icons action-btn">mode_comment</span>
+                        <span class="material-icons action-btn">share</span>
+                    </div>
+                    <div style="padding: 0 10px 10px;"><b>أحمد محمد</b> يوم جميل في الإسكندرية 🌊</div>
+                </div>
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="user-avatar" style="background-image: url('https://i.pravatar.cc/150?img=5'); background-size: cover;"></div>
+                        <b>سارة علي</b>
+                    </div>
+                    <img src="https://picsum.photos/400/300?random=2" class="post-img">
+                    <div class="post-actions">
+                        <span class="material-icons action-btn">favorite_border</span>
+                        <span class="material-icons action-btn">mode_comment</span>
+                    </div>
+                    <div style="padding: 0 10px 10px;"><b>سارة علي</b> قهوة الصباح ☕</div>
+                </div>
+            </div>
+
+            <div id="reels-tab" class="screen reels-screen">
+                <div class="reel-item" style="background: #333;">
+                    <h1>فيديو 1</h1>
+                    <div class="reel-info">
+                        <h3>@funny_user</h3>
+                        <p>شاهد هذا المقطع المضحك! 😂</p>
+                    </div>
+                </div>
+                <div class="reel-item" style="background: #444;">
+                    <h1>فيديو 2</h1>
+                </div>
+            </div>
+
+            <div id="store-tab" class="screen">
+                <div class="header"><div class="header-title">المتجر</div></div>
+                <div class="store-grid">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/200?random=3" class="product-img">
+                        <h4>ساعة ذكية</h4>
+                        <p style="color: var(--primary);">500 ج.م</p>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://picsum.photos/200?random=4" class="product-img">
+                        <h4>سماعة بلوتوث</h4>
+                        <p style="color: var(--primary);">300 ج.م</p>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://picsum.photos/200?random=5" class="product-img">
+                        <h4>لابتوب مستعمل</h4>
+                        <p style="color: var(--primary);">7000 ج.م</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="profile-tab" class="screen">
+                <div class="header">
+                    <div class="header-title">صفحتي</div>
+                    <span class="material-icons" onclick="logout()">logout</span>
+                </div>
+                <div class="profile-header">
+                    <div class="profile-pic" style="background-image: url('https://i.pravatar.cc/150?img=12'); background-size: cover;"></div>
+                    <h3 id="profile-name">مستخدم مدى</h3>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-num">120</div><div class="stat-label">متابع</div></div>
+                        <div class="stat-item"><div class="stat-num">50</div><div class="stat-label">يتابع</div></div>
+                        <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">منشور</div></div>
+                    </div>
+                    <button class="btn-outline" style="padding: 8px;">تعديل الملف الشخصي</button>
+                </div>
+                <div class="store-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 2px;">
+                    <img src="https://picsum.photos/100?random=10" style="width:100%">
+                    <img src="https://picsum.photos/100?random=11" style="width:100%">
+                    <img src="https://picsum.photos/100?random=12" style="width:100%">
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-item active" onclick="switchTab('home')">
+                    <span class="material-icons">home</span>
+                    الرئيسية
+                </div>
+                <div class="nav-item" onclick="switchTab('reels')">
+                    <span class="material-icons">movie</span>
+                    ريلز
+                </div>
+                <div class="nav-item" onclick="switchTab('store')">
+                    <span class="material-icons">storefront</span>
+                    المتجر
+                </div>
+                <div class="nav-item" onclick="switchTab('profile')">
+                    <span class="material-icons">person</span>
+                    حسابي
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // بياناتك (لا تعدلها، أنا حطيتها لك)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjcasRq39qOX04V-69W90VhX3VTPXaRxs",
+            authDomain: "mada-93de8.firebaseapp.com",
+            projectId: "mada-93de8",
+            storageBucket: "mada-93de8.firebasestorage.app",
+            messagingSenderId: "107022541072",
+            appId: "1:107022541072:web:7ca31aae8ac39beacd0595"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // عناصر التحكم
+        const authFlow = document.getElementById('auth-flow');
+        const mainApp = document.getElementById('main-app'); // تم تصحيح الاسم هنا
+        const profileName = document.getElementById('profile-name');
+        
+        // مراقبة الدخول
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authFlow.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                profileName.innerText = user.email.split('@')[0]; // عرض الاسم من الايميل
+            } else {
+                authFlow.classList.remove('hidden');
+                mainApp.classList.add('hidden');
+            }
+        });
+
+        // دوال التنقل (التابات)
+        window.switchTab = (tabName) => {
+            // إخفاء كل الشاشات
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            // إظهار الشاشة المطلوبة
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // تلوين الزر
+            const activeBtnIndex = ['home', 'reels', 'store', 'profile'].indexOf(tabName);
+            document.querySelectorAll('.nav-item')[activeBtnIndex].classList.add('active');
+        };
+
+        // دوال الدخول والخروج
+        window.login = async () => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            try { await signInWithEmailAndPassword(auth, e, p); } 
+            catch (err) { alert("خطأ: " + err.message); }
+        }
+        window.register = async () => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            try { await createUserWithEmailAndPassword(auth, e, p); alert("تم الحساب!"); } 
+            catch (err) { alert("خطأ: " + err.message); }
+        }
+        window.logout = () => signOut(auth);
+
+    </script>
+</body>
+</html>
