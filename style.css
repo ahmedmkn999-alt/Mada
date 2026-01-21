@@ -1,0 +1,51 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+:root {
+    --primary: #004D40;
+    --accent: #FF6F60;
+    --bg: #f0f2f5;
+    --white: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* حاوية الموبايل */
+.app-container {
+    width: 100%;
+    max-width: 450px;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100vh;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* الأزرار والحقول */
+input {
+    width: 100%; padding: 14px; margin: 10px 0;
+    border: 1px solid #ddd; border-radius: 12px;
+    background: #fafafa; font-family: inherit;
+}
+.btn {
+    width: 100%; padding: 14px; border-radius: 12px;
+    border: none; font-weight: bold; cursor: pointer;
+    margin-top: 10px; font-size: 1rem;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
+
+/* الفئات المساعدة */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.logo-img { width: 100px; margin-bottom: 20px; }
